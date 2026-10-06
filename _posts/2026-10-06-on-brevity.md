@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "About "On Brevity" paper"
+title: "About On Brevity paper"
 date: 2026-10-06
 description: "Generative AI has made producing text almost effortless. Has that made brevity more valuable, or has concise writing always been the real challenge?"
 categories: [writing, artificial-intelligence, communication]
