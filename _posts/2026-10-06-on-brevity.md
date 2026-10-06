@@ -1,9 +1,10 @@
 ---
 layout: post
-title: "On Brevity: An Old Principle in the Age of Generative AI"
+title: "About On Brevity"
 date: 2026-10-06
-description: "Generative AI has made producing text almost effortless. Has that made brevity more valuable, or has concise writing always been the real challenge?"
+description: "Has generative AI made brevity more valuable, or has concise writing always been the real challenge?"
 categories: [writing, artificial-intelligence, communication]
+image: /assets/images/on-brevity.png
 ---
 
 ![The title and abstract of On Brevity by Seb Krier](/assets/images/on-brevity.png)
