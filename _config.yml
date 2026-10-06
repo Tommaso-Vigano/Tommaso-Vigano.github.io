@@ -1,0 +1,11 @@
+title: "Tommaso Viganò"
+description: "Notes on machine learning, data, finance and everything I'm courious about."
+author: "Tommaso Viganò"
+
+url: "https://tommaso-vigano.github.io"
+baseurl: ""
+
+theme: minima
+
+header_pages:
+  - about.md
