@@ -1,0 +1,57 @@
+---
+layout: default
+title: Home
+---
+
+<div class="home">
+  <h1>Latest articles</h1>
+
+  <p>
+    Notes on machine learning, high-performance computing, data,
+    finance and everything I am curious about.
+  </p>
+
+  <div class="article-list">
+    {% for post in site.posts %}
+      <article class="article-card">
+
+        <a class="article-image-link" href="{{ post.url | relative_url }}">
+          {% if post.image %}
+            <img
+              class="article-image"
+              src="{{ post.image | relative_url }}"
+              alt="{{ post.title | escape }}"
+            >
+          {% endif %}
+        </a>
+
+        <div class="article-content">
+          <p class="article-date">
+            {{ post.date | date: "%B %-d, %Y" }}
+          </p>
+
+          <h2 class="article-title">
+            <a href="{{ post.url | relative_url }}">
+              {{ post.title | escape }}
+            </a>
+          </h2>
+
+          {% if post.description %}
+            <p class="article-description">
+              {{ post.description }}
+            </p>
+          {% else %}
+            <p class="article-description">
+              {{ post.excerpt | strip_html | truncatewords: 30 }}
+            </p>
+          {% endif %}
+
+          <a class="read-more" href="{{ post.url | relative_url }}">
+            Read article →
+          </a>
+        </div>
+
+      </article>
+    {% endfor %}
+  </div>
+</div>
