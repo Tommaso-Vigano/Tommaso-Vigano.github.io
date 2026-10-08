@@ -6,9 +6,9 @@ description: "Official inflation measures the price change of an average consume
 categories: [economics, data, inflation, projects]
 ---
 
-A few days ago, I was discussing inflation with a group of friends when I realized that none of us had a clear idea of how the official rate is actually calculated.
+A few days ago, I was discussing inflation with a group of friends when I realized that none of them had a clear idea of how the official rate is actually calculated.
 
-We hear inflation figures constantly: on the news, in political debates and whenever interest rates are discussed. Yet that single number hides an important assumption: it represents an *average* consumer.
+We hear about inflation constantly but that single number hides an important assumption: it represents an *average* consumer.
 
 But none of us is exactly average.
 
@@ -30,14 +30,7 @@ Inflation is therefore not a simple average of price changes. It is a **weighted
 
 The weighting system makes the official index meaningful for the population as a whole. However, it cannot perfectly represent every individual.
 
-For example, the 2026 Italian NIC basket assigns approximately 2.9% of total expenditure to alcoholic beverages, tobacco and narcotics. That may be a reasonable population-level estimate, but it clearly overstates this category for someone who never buys those products. At the same time, it may understate it for someone who spends considerably more than average on them.
-
-The same applies to every other category:
-
-- a commuter who drives every day is more exposed to fuel prices;
-- someone living with their parents may spend little or nothing on rent;
-- a person with particular medical needs may allocate more to healthcare;
-- someone who rarely eats out is less affected by restaurant prices.
+For example, the 2026 Italian NIC basket assigns approximately 2.9% of total expenditure to alcoholic beverages, tobacco and narcotics. That may be a reasonable population-level estimate, but it clearly overstates this category for someone who never buys those products. At the same time, it may understate it for an alcoholic.
 
 This does not mean that official inflation is inaccurate. It means that it answers a different question:
 
@@ -59,13 +52,13 @@ The calculation follows three steps:
 2. Those personal weights are applied to the corresponding ISTAT price indices.
 3. The annual change in the resulting personal index is compared with the official NIC inflation rate.
 
-The application also identifies the categories in which the personal basket differs most from the official ISTAT basket. This helps explain *why* the two inflation rates diverge, rather than simply displaying two numbers.
+The application also identifies the categories in which the personal basket differs most from the official ISTAT basket. This helps explain *why* the two inflation rates diverge.
 
 ## My result
 
 I tested the calculator using my own spending distribution and obtained the following result for 2025:
 
-![My personal inflation compared with the official ISTAT rate](/assets/images/personal-inflation-2025.png)
+![My personal inflation compared with the official ISTAT rate](/assets/images/my-inflation-plot.png)
 
 My estimated personal inflation was **2.35%**, while the official ISTAT rate was **1.65%**. My result was therefore **0.70 percentage points higher** than the official figure.
 
@@ -82,18 +75,6 @@ It assumes that the spending distribution entered today remains constant through
 The estimate also depends on the level of detail of the available categories. Two people may both spend on transport but buy very different products within that category.
 
 For these reasons, the result should not be interpreted as an exact measurement of every price a person faced. Its value is explanatory: it shows how strongly the composition of a basket influences the inflation rate attached to it.
-
-## One number, many experiences
-
-Official inflation remains essential. It provides a consistent measure for tracking prices over time, informing economic policy and comparing periods or countries.
-
-But it is not a universal description of every household.
-
-Two people can live in the same country, during the same year, and experience different increases in their cost of living—not because one of them is mistaken, but because they buy different things.
-
-The official rate tells us what happened to the average basket.
-
-Personal inflation asks whether that basket looks anything like ours.
 
 ---
 
