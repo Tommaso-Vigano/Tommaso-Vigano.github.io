@@ -4,7 +4,7 @@ title: "How Does Zero-Copy Improve Apache Kafka Performance?"
 date: 2026-10-14
 description: "Kafka can send log data to consumers without copying it through application memory. Here is how zero-copy reduces the work involved in moving bytes from disk to the network."
 categories: [technology, data, kafka]
-image: /assets/images/kafka-with-zero-copy.png
+image: /assets/images/zero-copy.png
 ---
 
 While studying Apache Kafka, I came across zero-copy, one of the ingredients behind its efficient I/O. The idea is to avoid copying message data into the broker’s application memory when all the broker needs to do is send those bytes to a consumer. But which copies can we avoid, and why does that matter?
@@ -13,7 +13,7 @@ While studying Apache Kafka, I came across zero-copy, one of the ingredients beh
 
 Before looking at the optimization, let’s follow the conventional path. The diagram separates user space, where Kafka runs, from kernel space, where the operating system manages file and network I/O. Both the application buffer and the OS page cache are in RAM.
 
-When a producer sends records, the broker receives them and appends them to its log. These writes initially reach the OS page cache and are flushed to disk later. Writing to a log file therefore does not necessarily mean an immediate physical disk write.
+When a producer sends records, the broker receives them and appends them to its log. These writes initially reach the OS page cache and are flushed to disk later.
 
 Now suppose a consumer requests records that are not in the cache. The conventional file-to-socket path involves four data transfers:
 
@@ -26,7 +26,7 @@ In the simplified `read()` plus `write()` model, this involves four transfers an
 
 The expensive round trip is from kernel memory into Kafka’s application buffer and back into kernel memory. Kafka is forwarding the same bytes, so copying them through user space adds work without changing the message.
 
-![Kafka broker write and conventional read paths without zero-copy](/assets/images/kafka-without-zero-copy.png)
+![Kafka broker write and conventional read paths without zero-copy](/assets/images/without-zero-copy.png)
 
 *Conventional file-to-network path without zero-copy*
 
@@ -34,17 +34,15 @@ The expensive round trip is from kernel memory into Kafka’s application buffer
 
 On Linux, `sendfile()` lets an application request a file-to-socket transfer without first reading the payload into a user-space buffer. It is a system call, rather than a shell command. Kafka can use this path to send log data to consumers over plaintext connections.
 
-The broker still decides which records to send. The difference is that the operating system handles the payload transfer without routing it through Kafka’s application buffer.
 
-![Kafka broker read path using zero-copy to bypass the application buffer](/assets/images/kafka-with-zero-copy.png)
+![Kafka broker read path using zero-copy to bypass the application buffer](/assets/images/zero-copy.png)
 
 *Optimized path that bypasses the application buffer*
 
-The exact copy count depends on the OS and hardware. A basic `sendfile()` path can still copy data from the page cache into a socket buffer. With support for gather operations, the socket can reference the cached data and the network interface can read it directly using DMA, or Direct Memory Access.
 
-In that optimized model, a cache miss requires two hardware transfers: disk to RAM and RAM to the network interface. A single `sendfile()` call also reduces the simplified model to two user/kernel mode transitions. “Zero-copy” refers to avoiding CPU copies of the payload along this path; the bytes still move between memory and devices.
+In that optimized model, a cache miss requires two hardware transfers: disk to RAM and RAM to the network interface. A single `sendfile()` call also reduces the simplified model to two user/kernel mode transitions. “Zero-copy” refers to avoiding CPU copies of the payload along this path;
 
-If the records are already in the page cache, the disk read is skipped. Consumers that keep up with producers can therefore fetch recently written data directly from RAM. Avoiding repeated copies is especially useful when several consumers request the same records.
+If the records are already in the page cache, the disk read is skipped (as before). Consumers that keep up with producers can therefore fetch recently written data directly from RAM. Avoiding repeated copies is especially useful when several consumers request the same records.
 
 There is a practical limit: Kafka’s standard TLS/SSL transport encrypts data in user space and does not use this `sendfile()` path. The diagrams describe the optimized plaintext case.
 
