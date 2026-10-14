@@ -60,7 +60,7 @@ position += transferred;
 remaining -= transferred;
 ```
 
-A call can transfer fewer bytes than requested, including zero. The caller must retain the updated position and remaining byte count and resume as needed. If a non-blocking socket cannot accept more data, it should wait until the socket is writable before retrying, rather than repeatedly spinning.
+A call can transfer fewer bytes than requested, including zero. The caller must retain the updated position and remaining byte count and resume as needed. If a non-blocking socket cannot accept more data, it should wait until the socket is writable before retrying, rather than repeatedly spinning
 
 A consumer fetch follows this simplified sequence:
 
