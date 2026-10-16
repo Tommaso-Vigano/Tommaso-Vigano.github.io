@@ -4,7 +4,7 @@ title: "Machine Learning from Scratch 01: The Perceptron"
 date: 2026-10-16
 description: "How does a model learn from examples? An introduction to learning paradigms, the perceptron, and the difference between learning OR and learning XOR."
 categories: [machine-learning, neural-networks, fundamentals]
-image: /assets/images/ml01-or-xor.png
+image: /assets/images/ml01-perceptron.png
 ---
 
 A few days ago, I was discussing machine learning and artificial intelligence with a friend who studies economics. While trying to explain a few ideas, I realized that I was a little rusty on some of the fundamentals.
