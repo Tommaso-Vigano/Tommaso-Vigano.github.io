@@ -7,11 +7,11 @@ categories: [machine-learning, neural-networks, fundamentals]
 image: /assets/images/ml01-or-xor.png
 ---
 
-A few days ago, I was discussing machine learning and artificial intelligence with a friend who studies economics. While trying to explain a few ideas, I realized that I was a little rusty on some of the fundamentals myself.
+A few days ago, I was discussing machine learning and artificial intelligence with a friend who studies economics. While trying to explain a few ideas, I realized that I was a little rusty on some of the fundamentals.
 
-He suggested turning those explanations into a series of blog posts so that he could follow along. I decided to take up the challenge.
+He suggested turning those explanations into a series of blog posts so that he could follow along so I decided to take up the challenge.
 
-This is the first article in that series. The goal is to revisit the foundations of machine learning and neural networks, explain the mathematics, and connect it to small Python examples.
+This is the first article in that series. 
 
 You will need basic Python and some familiarity with vectors and elementary mathematics. Statistics and calculus will become more useful as the series progresses. If you already have a computer science background, some of these first explanations will be familiar.
 
@@ -25,7 +25,7 @@ $$
 \mathcal{D}=\{\mathbf{x}^{(1)},\mathbf{x}^{(2)},\ldots,\mathbf{x}^{(N)}\}.
 $$
 
-Each observation is a vector of $d$ features. For a house, those features might include its floor area, number of rooms, and distance from the city centre.
+Each observation is a vector of $d$ features. For a house, those features might be its floor area, number of rooms, distance from the city centre...
 
 What we ask a model to learn depends on the information available during training. Three common learning paradigms are supervised learning, unsupervised learning, and reinforcement learning.
 
@@ -39,9 +39,7 @@ $$
 
 The model learns a relationship between inputs and targets so that it can predict an output for a new input.
 
-If the target is a category, such as whether an email is spam, the task is **classification**. If it is a numerical quantity, such as a house price, the task is **regression**.
-
-Doing well on examples seen during training is only part of the goal. We also want the model to work on new examples. This ability is called **generalization**.
+If the target is a category, such as recognizing if an email is spam, the task is **classification**. If it is a numerical quantity, such as a house price, the task is **regression**.
 
 ### Unsupervised learning
 
@@ -53,15 +51,15 @@ Those groups still need interpretation. A cluster is not automatically a meaning
 
 ![Classification with known labels compared with clustering without target labels](/assets/images/ml01-learning-paradigms.png)
 
-*Illustrative data: classification uses supplied labels, while clustering searches for groups without them.*
 
 ### Reinforcement learning
 
-In reinforcement learning, an **agent** interacts with an environment. It observes a situation, chooses an action, and receives feedback through rewards and subsequent observations.
+In reinforcement learning, an **agent** interacts with an environment. It observes a situation, chooses an action, and receives feedback through rewards and observations.
 
-The objective is to learn a policy for choosing actions that maximizes expected cumulative reward. An action may have consequences that only become apparent much later, so maximizing the next reward is not always the right strategy.
+The objective is to learn a policy for choosing actions that maximizes expected cumulative reward. An action may have consequences that only become apparent much later, so maximizing the next reward is not always the right strategy as you could think.
 
-A game-playing agent, for example, may sacrifice a piece now to improve its chances of winning later. Personally, I find this interaction between decisions and delayed consequences particularly interesting.
+A game-playing agent, for example, may sacrifice a piece now to improve its chances of winning later. 
+Personally, I think that this is the most interesting paradigm, even it's the more complicated.
 
 ## Where deep learning fits
 
@@ -85,11 +83,11 @@ Here, we chose the transformation ourselves. A neural network can instead learn 
 
 This is often part of **end-to-end learning**, where a system is trained from its inputs to its final outputs. However, end-to-end learning and deep learning are not interchangeable terms: the former describes how a system is trained, while the latter concerns the depth of its learned transformations.
 
-To understand how neural networks make and learn decisions, we will start with a single computational unit: the perceptron.
+To understand how neural networks make and learn decisions, we will start with a single and basic computational unit: the perceptron.
 
 ## The perceptron model
 
-The perceptron is loosely inspired by biological neurons: it combines incoming signals and produces an output according to a threshold. It is a mathematical abstraction, not a detailed simulation of how a neuron works.
+The perceptron is inspired by biological neurons: it combines incoming signals and produces an output according to a threshold. Clearly it is a mathematical abstraction, not a detailed simulation of how a real neuron works.
 
 Given $d$ input features, it first computes a weighted sum:
 
@@ -118,7 +116,6 @@ h(z)=
 \end{cases}
 $$
 
-Our target classes will be $-1$ and $+1$. The value zero represents an undecided point exactly on the decision boundary, and we will treat it as requiring a training update. Other tie conventions are possible, but we need to choose one consistently.
 
 We can absorb the bias into the weight vector by introducing a constant input $x_0=1$ and setting $w_0=b$:
 
@@ -138,7 +135,7 @@ There are $d$ measured inputs and $d+1$ trainable parameters, including the bias
 
 ## A perceptron that implements OR
 
-Before learning the weights, let’s check that a perceptron can implement a familiar Boolean function.
+Before looking how does the model learn the weights, let’s check that a perceptron can implement a familiar Boolean function.
 
 The OR operator returns true whenever at least one input is true:
 
@@ -157,26 +154,22 @@ $$
 
 The score is negative only for $(0,0)$ and positive for the other three inputs. Interpreting a negative prediction as false and a positive prediction as true gives OR.
 
-But we selected these weights by hand. How could a model find suitable weights from the examples?
+But we selected these weights following the literature. How could a model find suitable weights from the examples?
 
-## Learning the weights
+## Hebbian Learning Rule
 
-We will use the **perceptron learning rule**. For each training example, compute the score and update the weights if the prediction is wrong or the score is zero:
+We will use the **Hebbian learning rule**. For each training example, compute the score and update the weights if the prediction is wrong by using this rule:
 
 $$
-\tilde{\mathbf{w}}^{(k+1)}=
-\tilde{\mathbf{w}}^{(k)}+
-\eta\,t\,\tilde{\mathbf{x}}
-\quad\text{when }t z\leq 0.
+\begin{aligned}
+w_i^{(k+1)} &= w_i^k + \Delta(w_i^k) \\
+\Delta(w_i^k) &= \eta x_i^k t^k
+\end{aligned}
 $$
 
 Otherwise, leave the weights unchanged.
 
-Here, $\eta>0$ is the **learning rate**, which controls the size of an update; $t$ is the target; and $k$ counts parameter updates. Because $\tilde{\mathbf{x}}$ includes the constant input, the same rule also updates the bias.
-
-For a positive example, the update adds a multiple of the input vector. For a negative example, it subtracts one. In either case, the update moves the example’s score toward the desired sign.
-
-This rule has a correlation-based form associated with Hebbian ideas, but the instruction to update only on errors or boundary cases is important. The procedure here is specifically **perceptron learning**, rather than the basic Hebbian rule.
+Here, $\eta>0$ is the **learning rate**, which controls the size of an update; $t$ is the target i.e. the desired output; and $k$ counts parameter updates. 
 
 ## Learning OR step by step
 
@@ -195,13 +188,13 @@ $$
 \tilde{\mathbf{w}}^{(0)}=(0,0,0),\qquad \eta=0.5.
 $$
 
-The order of the weights is always $(w_0,w_1,w_2)$, and each augmented input is $(1,x_1,x_2)$.
+The order of the weights is always $(w_0,w_1,w_2)$, and each input is $(1,x_1,x_2)$.
 
 ### First epoch
 
 An **epoch** is one complete pass through the training dataset.
 
-For the first example, the augmented input is $(1,-1,-1)$ and the target is $-1$. With zero weights, the score is zero, so an update is required:
+For the first example, the input is $(1,-1,-1)$ and the target is $-1$. With zero weights, the score is zero, so an update is required:
 
 $$
 \Delta\tilde{\mathbf{w}}
@@ -254,104 +247,47 @@ An update that fixes one example can change predictions for earlier examples. We
 
 Every example is correct and no weights change. Training stops.
 
-## The same example in Python
 
-The following script reproduces both epochs. The first column of `X` is the constant bias input:
+## Visualizing the perceptron
 
-```python
-import numpy as np
-
-X = np.array([
-    [1, -1, -1],
-    [1, -1,  1],
-    [1,  1, -1],
-    [1,  1,  1],
-], dtype=float)
-
-targets = np.array([-1, 1, 1, 1])
-weights = np.zeros(X.shape[1])
-learning_rate = 0.5
-max_epochs = 100
-
-for epoch in range(1, max_epochs + 1):
-    updates = 0
-
-    for x, target in zip(X, targets):
-        score = weights @ x
-        if target * score <= 0:
-            weights += learning_rate * target * x
-            updates += 1
-
-    print(f"Epoch {epoch}: {updates} updates; weights = {weights}")
-
-    if updates == 0:
-        break
-else:
-    raise RuntimeError("Training did not converge within max_epochs.")
-
-predictions = np.sign(X @ weights).astype(int)
-print("Predictions:", predictions)
-```
-
-The output is:
-
-```text
-Epoch 1: 3 updates; weights = [0.5 0.5 0.5]
-Epoch 2: 0 updates; weights = [0.5 0.5 0.5]
-Predictions: [-1  1  1  1]
-```
-
-The epoch limit prevents an endless training loop on a dataset the perceptron cannot separate. Reaching that limit alone does not prove that separation is impossible; a separable problem may simply need more iterations.
-
-## What the perceptron learns geometrically
-
-The output changes where the weighted sum is zero. In two dimensions, the **decision boundary** is:
+We have seen that a perceptron computes a weighted sum of its inputs and returns its sign. We can also interpret this operation geometrically: the perceptron is a **linear classifier**, whose decision boundary is the hyperplane
 
 $$
-w_0+w_1x_1+w_2x_2=0.
+w_0 + w_1 x_1 + \cdots + w_I x_I = 0.
 $$
 
-When $w_2\neq 0$, we can rearrange this as:
+Points on one side produce a positive weighted sum; points on the other side produce a negative one.
+
+With two input features, $I=2$, the boundary becomes
 
 $$
-x_2=-\frac{w_0}{w_2}-\frac{w_1}{w_2}x_1.
+w_0 + w_1 x_1 + w_2 x_2 = 0.
 $$
 
-This is a straight line. If $w_2=0$ and $w_1\neq 0$, the boundary is a vertical line instead. With more input dimensions, the equivalent boundary is a hyperplane.
-
-For the OR weights learned above, the boundary is:
+Assuming $w_2 \neq 0$, we can rearrange it step by step:
 
 $$
-0.5+0.5x_1+0.5x_2=0,
-\qquad\text{or}\qquad
-x_2=-1-x_1.
+\begin{aligned}
+w_2 x_2 &= -w_0 - w_1 x_1 \\
+x_2 &= -\frac{w_0}{w_2} - \frac{w_1}{w_2} x_1.
+\end{aligned}
 $$
 
-It separates the single negative example from the three positive examples.
+This is the equation of a straight line. The weights determine its slope and position, while the sign of the weighted sum determines the predicted class.
+
+This is exactly how the perceptron implements Boolean operators such as OR: it finds a line that separates the inputs associated with a negative target from those associated with a positive target.
+
+We can now state which Boolean functions a single perceptron can learn: **those whose positive and negative examples are linearly separable in the given input space**.
+
+XOR is an example of a Boolean function that does not satisfy this condition. It returns true when exactly one input is true. Using our bipolar notation, its positive examples are $(-1,+1)$ and $(+1,-1)$, while its negative examples are $(-1,-1)$ and $(+1,+1)$.
 
 ![OR examples separated by a straight line alongside XOR examples that cannot be separated by one line](/assets/images/ml01-or-xor.png)
 
-*Both plots use bipolar inputs and targets. The line on the left corresponds to the OR weights learned in the example.*
+*OR is linearly separable. For XOR, the classes occupy opposite corners, so no single straight line can separate them.*
 
-Different initial weights or a different order of examples can produce another valid separator. Starting from $(0,2,1)$ with the same learning rate and sample order, for example, leads to $(0.5,1.5,1.5)$. These weights also classify all four OR examples correctly, but define a different line.
+In this situation, a single perceptron cannot solve the problem using the original inputs. We need a different representation in which the classes become linearly separable.
 
-Learning therefore does not necessarily recover a unique set of parameters.
-
-## Why XOR is different
-
-The **perceptron convergence theorem** guarantees that the standard algorithm, with a fixed positive learning rate and repeated passes through a finite, linearly separable training set, finds a separator after finitely many updates.
-
-The condition matters: the classes must be separable by a line, or a hyperplane in higher dimensions, in the representation supplied to the model.
-
-OR satisfies that condition. XOR does not.
-
-XOR is true when exactly one input is true. In bipolar notation, its positive examples are $(-1,+1)$ and $(+1,-1)$, while its negative examples are $(-1,-1)$ and $(+1,+1)$.
-
-As the right-hand plot shows, the classes occupy opposite corners. No single straight line can separate them perfectly. A single perceptron receiving only these two input features cannot represent XOR, regardless of how long we train it.
-
-This limitation concerns the model and its input representation. It does not mean that XOR is impossible for neural networks. Nonlinear transformations can make the classes separable in another representation; multilayer networks can learn such transformations.
-
-That is where we will pick up in the next article: how combining computational units into a multilayer perceptron changes the decisions a network can represent.
+Learning such representations through additional layers is the idea we will explore with **multilayer perceptrons** in the next article.
 
 ---
 
