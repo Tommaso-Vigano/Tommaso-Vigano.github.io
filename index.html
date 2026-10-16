@@ -2,46 +2,200 @@
 layout: default
 ---
 
-<div class="journal-home">
-  <section class="journal-intro" aria-labelledby="journal-title">
-    <h1 id="journal-title" class="journal-visually-hidden">{{ site.title | escape }}</h1>
-    <p>Notes on machine learning, high-performance computing, data, finance and everything I am curious about.</p>
-  </section>
+<style>
+  /* These styles ship with the homepage so no extra stylesheet is needed. */
+  body {
+    color: #253041;
+    background: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrapper {
+    max-width: 1040px;
+    padding-left: 36px;
+    padding-right: 36px;
+  }
+  .site-header {
+    min-height: 80px;
+    border-top: 0;
+    border-bottom: 1px solid #e8ebef;
+    background: #fff;
+  }
+  .site-header .site-title,
+  .site-header .site-title:visited {
+    padding: 0;
+    color: #182333;
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 700;
+    font-size: 27px;
+    letter-spacing: -0.7px;
+    line-height: 80px;
+  }
+  .site-header .site-title:hover { text-decoration: none; color: #23566b; }
+  .site-nav { line-height: 80px; }
+  .site-nav .page-link { color: #5b6675; font-size: 14px; }
+  .page-content { padding: 0; }
+  .editorial-home { padding: 38px 0 68px; }
+  .editorial-sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0;
+    margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0);
+    white-space: nowrap; border: 0;
+  }
+  .editorial-intro {
+    max-width: 740px;
+    margin: 0 0 32px;
+    color: #5b6675;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.8;
+  }
+  .editorial-list { border-top: 1px solid #e8ebef; }
+  .editorial-entry {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    gap: 44px;
+    align-items: center;
+    padding: 32px 0;
+    border-bottom: 1px solid #e8ebef;
+  }
+  .editorial-entry--text { grid-template-columns: minmax(0, 1fr); }
+  .editorial-copy { min-width: 0; }
+  .editorial-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    margin: 0 0 10px;
+    color: #687585;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .editorial-topic {
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: #f0f4f6;
+    color: #3c5c6c;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.065em;
+    text-transform: uppercase;
+  }
+  .editorial-home .editorial-title {
+    margin: 0 0 10px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.55px;
+    line-height: 1.3;
+    overflow-wrap: break-word;
+  }
+  .editorial-home .editorial-title a,
+  .editorial-home .editorial-title a:visited {
+    color: #182333;
+    text-decoration: none;
+  }
+  .editorial-home .editorial-title a:hover { color: #23566b; }
+  .editorial-home a:focus-visible {
+    outline: 2px solid #23566b;
+    outline-offset: 5px;
+    border-radius: 3px;
+  }
+  .editorial-description {
+    max-width: 660px;
+    margin: 0;
+    color: #5b6675;
+    font-size: 15px;
+    line-height: 1.75;
+  }
+  .editorial-thumbnail {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 220px;
+    height: 148px;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 1px solid #e6eaf0;
+    border-radius: 8px;
+    background: #fafbfd;
+  }
+  .editorial-thumbnail img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    margin: 0;
+    object-fit: contain;
+  }
+  .site-footer {
+    padding: 26px 0;
+    border-top: 0;
+    background: #f7f9fb;
+  }
+  .site-footer .footer-heading {
+    margin-bottom: 10px;
+    color: #253041;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .site-footer .footer-col-wrapper {
+    color: #687585;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .site-footer .contact-list .p-name { display: none; }
+  @media (max-width: 760px) {
+    .wrapper { padding-left: 24px; padding-right: 24px; }
+    .editorial-entry { grid-template-columns: minmax(0, 1fr) 170px; gap: 26px; }
+    .editorial-entry--text { grid-template-columns: minmax(0, 1fr); }
+    .editorial-thumbnail { width: 170px; height: 120px; }
+    .editorial-home .editorial-title { font-size: 24px; }
+  }
+  @media (max-width: 600px) {
+    .site-header { min-height: 72px; }
+    .site-header .site-title { font-size: 24px; line-height: 72px; }
+    .site-nav { top: 19px; right: 24px; line-height: 1.5; }
+    .editorial-home { padding-top: 28px; padding-bottom: 42px; }
+    .editorial-intro { margin-bottom: 24px; font-size: 16px; }
+    .editorial-entry { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 27px 0; }
+    .editorial-home .editorial-title { font-size: 25px; }
+    .editorial-thumbnail { width: 100%; height: 180px; }
+    .editorial-description { font-size: 14px; }
+  }
+</style>
 
-  <div class="journal-articles">
+<div class="editorial-home">
+  <h1 class="editorial-sr-only">{{ site.title | escape }}</h1>
+  <p class="editorial-intro">Notes on machine learning, high-performance computing, data and finance.</p>
+
+  <div class="editorial-list">
     {% assign ordered_posts = site.posts | sort: 'date' | reverse %}
     {% for post in ordered_posts %}
-      <article class="journal-entry{% unless post.image %} journal-entry--text{% endunless %}">
-        {% if post.image %}
-          <a class="journal-entry-image" href="{{ post.url | relative_url }}" tabindex="-1" aria-hidden="true">
-            <img
-              src="{{ post.image | relative_url }}"
-              alt=""
-              width="560"
-              height="350"
-              loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-              decoding="async">
-          </a>
-        {% endif %}
-
-        <div class="journal-entry-body">
-          <div class="journal-entry-meta">
-            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%B %-d, %Y' }}</time>
+      <article class="editorial-entry{% unless post.image %} editorial-entry--text{% endunless %}">
+        <div class="editorial-copy">
+          <div class="editorial-meta">
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%b %-d, %Y' }}</time>
             {% if post.categories.size > 0 %}
-              <span class="journal-entry-topic">{{ post.categories | first | replace: '-', ' ' | escape }}</span>
+              <span class="editorial-topic">{{ post.categories | first | replace: '-', ' ' | escape }}</span>
             {% endif %}
           </div>
 
-          <h2 class="journal-entry-title">
-            <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
-          </h2>
+          <h2 class="editorial-title"><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h2>
 
           {% if post.description %}
-            <p class="journal-entry-description">{{ post.description | escape }}</p>
+            <p class="editorial-description">{{ post.description | escape }}</p>
           {% elsif post.excerpt %}
-            <p class="journal-entry-description">{{ post.excerpt | strip_html | normalize_whitespace | truncatewords: 32 | escape }}</p>
+            <p class="editorial-description">{{ post.excerpt | strip_html | normalize_whitespace | truncatewords: 32 | escape }}</p>
           {% endif %}
         </div>
+
+        {% if post.image %}
+          <a class="editorial-thumbnail" href="{{ post.url | relative_url }}" tabindex="-1" aria-hidden="true">
+            <img src="{{ post.image | relative_url }}" alt="" width="200" height="128"
+                 loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" decoding="async">
+          </a>
+        {% endif %}
       </article>
     {% endfor %}
   </div>
