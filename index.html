@@ -1,56 +1,47 @@
 ---
 layout: default
-title: Home
 ---
 
-<div class="home">
-  <h1>Latest articles</h1>
+<div class="journal-home">
+  <section class="journal-intro" aria-labelledby="journal-title">
+    <h1 id="journal-title" class="journal-visually-hidden">{{ site.title | escape }}</h1>
+    <p>Notes on machine learning, high-performance computing, data, finance and everything I am curious about.</p>
+  </section>
 
-  <p>
-    Notes on machine learning, high-performance computing, data,
-    finance and everything I am curious about.
-  </p>
-
-  <div class="article-list">
-    {% for post in site.posts %}
-      <article class="article-card">
-
-        <a class="article-image-link" href="{{ post.url | relative_url }}">
-          {% if post.image %}
+  <div class="journal-articles">
+    {% assign ordered_posts = site.posts | sort: 'date' | reverse %}
+    {% for post in ordered_posts %}
+      <article class="journal-entry{% unless post.image %} journal-entry--text{% endunless %}">
+        {% if post.image %}
+          <a class="journal-entry-image" href="{{ post.url | relative_url }}" tabindex="-1" aria-hidden="true">
             <img
-              class="article-image"
               src="{{ post.image | relative_url }}"
-              alt="{{ post.title | escape }}"
-            >
-          {% endif %}
-        </a>
+              alt=""
+              width="560"
+              height="350"
+              loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+              decoding="async">
+          </a>
+        {% endif %}
 
-        <div class="article-content">
-          <p class="article-date">
-            {{ post.date | date: "%B %-d, %Y" }}
-          </p>
+        <div class="journal-entry-body">
+          <div class="journal-entry-meta">
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%B %-d, %Y' }}</time>
+            {% if post.categories.size > 0 %}
+              <span class="journal-entry-topic">{{ post.categories | first | replace: '-', ' ' | escape }}</span>
+            {% endif %}
+          </div>
 
-          <h2 class="article-title">
-            <a href="{{ post.url | relative_url }}">
-              {{ post.title | escape }}
-            </a>
+          <h2 class="journal-entry-title">
+            <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
           </h2>
 
           {% if post.description %}
-            <p class="article-description">
-              {{ post.description }}
-            </p>
-          {% else %}
-            <p class="article-description">
-              {{ post.excerpt | strip_html | truncatewords: 30 }}
-            </p>
+            <p class="journal-entry-description">{{ post.description | escape }}</p>
+          {% elsif post.excerpt %}
+            <p class="journal-entry-description">{{ post.excerpt | strip_html | normalize_whitespace | truncatewords: 32 | escape }}</p>
           {% endif %}
-
-          <a class="read-more" href="{{ post.url | relative_url }}">
-            Read article →
-          </a>
         </div>
-
       </article>
     {% endfor %}
   </div>
