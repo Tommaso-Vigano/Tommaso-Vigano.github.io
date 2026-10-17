@@ -3,7 +3,7 @@ layout: post
 title: "What Is Your Personal Inflation?"
 date: 2026-10-08
 description: "Official inflation measures the price change of an average consumer basket. But how closely does that basket resemble yours?"
-categories: [economics, data, inflation, projects]
+categories: [personal finance, data, inflation, projects]
 image: /assets/images/my-inflation-plot-principal.png
 ---
 
