@@ -35,7 +35,7 @@ Before continuing, let’s make a few assumptions:
 
 - We use **fully connected layers**, meaning that every neuron in one layer is connected to every neuron in the next. If inputs are represented as row vectors and the bias is included as an extra constant input, the first weight matrix $W$ has shape $(I+1)\times J$, where $I$ is the number of input features and $J$ is the number of neurons in the first hidden layer.
 - The output of each layer depends only on the previous layer.
-- For the gradient-based training we are about to discuss, we initially consider differentiable activation functions. If you are rusty on the concept, you can review [differentiability here](https://en.wikipedia.org/wiki/Differentiable_function).
+- For the gradient-based training we are about to discuss, we initially consider differentiable activation functions. If you are rusty on the concept, you can review differentiability [here](https://en.wikipedia.org/wiki/Differentiable_function).
 
 ## Activation functions
 
@@ -92,7 +92,7 @@ $$
 
 where $z_k$ is the weighted sum entering output unit $k$, and $K$ is the number of classes. Softmax produces positive outputs that sum to one. The exponential amplifies differences between the scores, giving larger scores a larger share of the total. It provides a smooth alternative to selecting only the maximum, which is the idea behind the name. If you are interested, let me know and I will write a post about it.
 
-We have discussed the output layer, but what about the hidden layers? For now, we will use tanh. ReLU is a common modern choice for hidden layers, although it is differentiable only almost everywhere. I will introduce it later in the series.
+We have discussed the output layer, but what about the hidden layers? For now, we will use tanh. ReLU is a common modern choice for hidden layers, but I will introduce it later in the series.
 
 ## Can we now approximate everything?
 
@@ -148,8 +148,6 @@ $$
 $$
 
 Continue until a stopping criterion is reached.
-
-![An animation illustrating the slope of a quadratic function](/assets/images/ml02-gradient-descent.gif)
 
 ![Gradient descent moving from an initial weight towards the minimum of a quadratic error function](/assets/images/ml02-gradient-descent-steps.png)
 
