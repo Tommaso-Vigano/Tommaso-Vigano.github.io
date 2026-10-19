@@ -42,33 +42,36 @@ This should help clarify the roles:
 
 The diagram uses **training data** for the development pool, which contains both the training and validation sets. Terminology varies across sources, but the roles matter: fitting parameters, selecting the model, and assessing the final result are different tasks.
 
-There are several ways to organize these splits. A single split is called **holdout validation**; repeatedly changing which observations are held out gives us **cross-validation**:
+How can we check whether a model works well on observations it has not learned from?
 
-- **Holdout:** split the development data once into training and validation sets. Fit on the training set and evaluate on the validation set. This is simple, but the result depends on that particular split.
-- **Leave-one-out cross-validation (LOOCV):** with $N$ development observations, train $N$ models. Each time, leave one observation out for validation and train on the other $N-1$. This uses most observations for fitting in each run, but can be expensive.
-- **$K$-fold cross-validation:** divide the development data into $K$ folds. Train on $K-1$ folds and validate on the remaining fold, repeating until every fold has served as validation data once.
+The simplest approach is to split our development data into two parts: one for training and one for validation. We keep the test set separate for the final assessment.
+
+There are three common ways to organize training and validation:
+
+- **Holdout:** make one split. Train the model on the training set and measure its loss on the validation set. This is simple, but a different split might give us a different result.
+- **Leave-one-out cross-validation (LOOCV):** leave out one observation, train on all the others, and validate on the observation left out. Repeat this for every observation. With $N$ observations, this means training $N$ models, which can be expensive.
+- **$K$-fold cross-validation:** divide the data into $K$ groups, called *folds*. Take turns using one group for validation and all the others for training.
 
 ![Five-fold cross-validation rotates the validation fold while using the remaining folds for training](/assets/images/ml04-k-fold.png)
 
-Now we have several fitted models. What do we do with them? For cross-validation, we **average their validation losses**. 
+Let’s make the last method more concrete. Suppose we have **100 observations** and choose **five-fold cross-validation**. We divide them into five groups of 20 observations.
 
-Let $\mathcal{V}_k$ contain the indices of the validation observations in fold $k$, and let $\mathbf{w}^{(k)}$ be the weights learned without that fold. If $L(t_n,g(\mathbf{x}_n,\mathbf{w}^{(k)}))$ is the loss for observation $n$, then:
+First, we train on 80 observations and validate on the remaining 20. Then we train a fresh model, holding out a different group of 20. We repeat this five times, so every group gets a turn as the validation set.
 
-$$
-\widehat{e}_k
-=\frac{1}{|\mathcal{V}_k|}
-\sum_{n\in\mathcal{V}_k}
-L\left(t_n,g(\mathbf{x}_n,\mathbf{w}^{(k)})\right).
-$$
-
-The average cross-validation loss is:
+Each run gives us a validation loss. To summarize the five results, we simply take their average:
 
 $$
-\widehat{E}_{\mathrm{CV}}
-=\frac{1}{K}\sum_{k=1}^{K}\widehat{e}_k.
+\text{Average validation loss}
+=\frac{e_1+e_2+e_3+e_4+e_5}{5},
 $$
 
-We use this value to compare model choices. After selecting the configuration, we can refit it on the development data and evaluate it on the untouched test set. The [scikit-learn guide](https://scikit-learn.org/stable/modules/cross_validation.html) provides more detail on these procedures.
+where $e_1,\ldots,e_5$ are the losses from the five runs. This makes our comparison less dependent on one particular split.
+
+For example, suppose we want to choose between a network with 10 hidden neurons and one with 20. We perform the same cross-validation procedure for each choice and compare their average validation losses.
+
+Once we have selected the configuration, we train a new model using all the development data. Only then do we evaluate it on the untouched test set.
+
+
 
 ## How to address overfitting in neural networks
 
