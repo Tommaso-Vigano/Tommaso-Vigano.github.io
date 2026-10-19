@@ -180,56 +180,34 @@ $$
 
 The first term measures the fit; the second is the regularization term. We have a new contribution to the loss that penalizes large weight magnitudes.
 
-A smaller prior variance $\sigma_w^2$ means stronger shrinkage towards zero. In practice, we usually tune the combined regularization strength $\gamma$. How do we choose it? As with other hyperparameters: using a validation set or cross-validation.
+A smaller prior variance $\sigma_w^2$ means stronger shrinkage towards zero. In practice, we usually tune the combined regularization strength $\gamma$. 
 
 ![An illustrative validation-loss curve for different regularization strengths, with its lowest displayed value at gamma equal to five](/assets/images/ml04-regularization-selection.png)
 
-For a single training–validation split, the procedure is:
+How do we choose $\gamma$? We try different values and check which one gives the best predictions on the validation set.
 
-1. Split the development data into training and validation sets.
-2. For each candidate $\gamma$, fit a model by minimizing the regularized training objective.
-3. Evaluate each fitted model’s prediction loss on the validation set.
-4. Choose the $\gamma^*$ with the lowest validation loss.
-5. Combine the training and validation sets, and refit using the selected $\gamma^*$. Keep the test set separate for the final assessment.
-
-For step 2, the training objective is:
+First, split the development data into training and validation sets. For each value of $\gamma$, train a fresh model by minimizing:
 
 $$
-\begin{aligned}
-E_{\gamma}^{\mathrm{TRAIN}}(\mathbf{w})
-&=\sum_{n\in\mathcal{T}}[t_n-g(\mathbf{x}_n,\mathbf{w})]^2\\
-&\qquad+\gamma\sum_{q=1}^{Q}w_q^2,
-\end{aligned}
+E_{\mathrm{TRAIN}}(\mathbf{w})
+=\sum_{n=1}^{N_{\mathrm{TRAIN}}}
+[t_n-g(\mathbf{x}_n,\mathbf{w})]^2
++\gamma\sum_{q=1}^{Q}w_q^2.
 $$
 
-where $\mathcal{T}$ contains the training indices. Let $\widehat{\mathbf{w}}_{\gamma}$ be the weights obtained for that candidate. On the validation set $\mathcal{V}$, we compute:
+This balances two goals: fitting the training observations and keeping the weights small. A larger $\gamma$ gives more importance to the weight penalty.
+
+After training each model, measure its prediction loss on the validation set:
 
 $$
-E_{\gamma}^{\mathrm{VAL}}
-=\sum_{n\in\mathcal{V}}
-\left[t_n-g(\mathbf{x}_n,\widehat{\mathbf{w}}_{\gamma})\right]^2.
+E_{\mathrm{VAL}}
+=\sum_{n=1}^{N_{\mathrm{VAL}}}
+[t_n-g(\mathbf{x}_n,\mathbf{w})]^2.
 $$
 
-Notice that the validation loss contains **only the prediction loss**, not the weight penalty. We want to measure how well the model predicts held-out observations.
+Here, $\mathbf{w}$ contains the weights learned by that model. Notice that **we do not add the weight penalty to the validation loss**: we want to see how well the model predicts observations it has not learned from.
 
-We then select:
+Choose the value of $\gamma$ that gives the lowest validation loss. Then train a new model on the combined training and validation data using that value.
 
-$$
-\gamma^*
-=\underset{\gamma}{\operatorname{arg\,min}}\;
-E_{\gamma}^{\mathrm{VAL}}.
-$$
+Finally, evaluate the resulting model on the untouched test set.
 
-Finally, with $\mathcal{D}_{\mathrm{dev}}=\mathcal{T}\cup\mathcal{V}$, we refit by minimizing:
-
-$$
-\begin{aligned}
-E_{\gamma^*}(\mathbf{w})
-&=\sum_{n\in\mathcal{D}_{\mathrm{dev}}}
-[t_n-g(\mathbf{x}_n,\mathbf{w})]^2\\
-&\qquad+\gamma^*\sum_{q=1}^{Q}w_q^2.
-\end{aligned}
-$$
-
-
-These equations use a sum of losses. If we use the average instead, we must scale the penalty consistently: a summed loss with coefficient $\gamma$ is equivalent to a mean loss with coefficient $\gamma/|\mathcal{T}|$ on that training set.
