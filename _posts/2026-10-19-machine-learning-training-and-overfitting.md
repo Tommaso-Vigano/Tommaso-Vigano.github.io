@@ -50,7 +50,7 @@ There are several ways to organize these splits. A single split is called **hold
 
 ![Five-fold cross-validation rotates the validation fold while using the remaining folds for training](/assets/images/ml04-k-fold.png)
 
-Now we have several fitted models. What do we do with them? For cross-validation, we **average their validation losses**. Majority voting is a separate option for combining classifiers into an ensemble; it is not how we compute the cross-validation loss.
+Now we have several fitted models. What do we do with them? For cross-validation, we **average their validation losses**. 
 
 Let $\mathcal{V}_k$ contain the indices of the validation observations in fold $k$, and let $\mathbf{w}^{(k)}$ be the weights learned without that fold. If $L(t_n,g(\mathbf{x}_n,\mathbf{w}^{(k)}))$ is the loss for observation $n$, then:
 
@@ -106,7 +106,7 @@ p(\mathcal{D}\mid\mathbf{w})p(\mathbf{w}).
 \end{aligned}
 $$
 
-The denominator in Bayes’s rule does not depend on the weights, so it does not change the maximizer. The prior $p(\mathbf{w})$ expresses our assumptions about which weight values are more plausible before observing the data.
+The prior $p(\mathbf{w})$ expresses our assumptions about which weight values are more plausible before observing the data.
 
 Why can this help? Two weight configurations may fit the training data similarly, while one relies on much larger weights. A prior favoring smaller weights makes us prefer the other solution unless the improvement in fit justifies those larger values. This can reduce fitting to noise, although it does not guarantee good generalization.
 
@@ -212,5 +212,6 @@ E_{\gamma^*}(\mathbf{w})
 &\qquad+\gamma^*\sum_{q=1}^{Q}w_q^2.
 \end{aligned}
 $$
+
 
 These equations use a sum of losses. If we use the average instead, we must scale the penalty consistently: a summed loss with coefficient $\gamma$ is equivalent to a mean loss with coefficient $\gamma/|\mathcal{T}|$ on that training set.
