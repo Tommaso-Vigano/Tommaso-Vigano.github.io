@@ -71,6 +71,21 @@ For example, suppose we want to choose between a network with 10 hidden neurons 
 
 Once we have selected the configuration, we train a new model using all the development data. Only then do we evaluate it on the untouched test set.
 
+To be more quantitative: let $\mathcal{V}_k$ contain the indices of the validation observations in fold $k$, and let $\mathbf{w}^{(k)}$ be the weights learned without that fold. If $L(t_n,g(\mathbf{x}_n,\mathbf{w}^{(k)}))$ is the loss for observation $n$, then:
+
+$$
+\widehat{e}_k
+=\frac{1}{|\mathcal{V}_k|}
+\sum_{n\in\mathcal{V}_k}
+L\left(t_n,g(\mathbf{x}_n,\mathbf{w}^{(k)})\right).
+$$
+
+The average cross-validation loss is:
+
+$$
+\widehat{E}_{\mathrm{CV}}
+=\frac{1}{K}\sum_{k=1}^{K}\widehat{e}_k.
+$$
 
 
 ## How to address overfitting in neural networks
