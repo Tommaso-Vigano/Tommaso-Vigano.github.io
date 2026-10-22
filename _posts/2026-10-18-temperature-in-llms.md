@@ -7,7 +7,7 @@ categories: [machine-learning, llm, algorithms]
 image: /assets/images/llm-temperature-softmax.png
 ---
 
-Have you ever read a paper about large language models, or LLMs? If so, you have probably seen a value specified for a parameter called **temperature**.
+Have you ever read a paper about LLMs? If so, you have probably seen a value specified for a parameter called **temperature**.
 
 Today, I want to explain what temperature in an LLM actually means.
 
@@ -15,7 +15,7 @@ I’ll start a little further back, with the algorithm through which I first enc
 
 ## What is simulated annealing?
 
-<p><a href="https://github.com/Tommaso-Vigano/simulated-annealing" style="display:inline-block;padding:0.7rem 1.1rem;border:1px solid #1f2937;border-radius:6px;background:#111827;color:#fff;font-weight:600;text-decoration:none;">View my C++ implementation on GitHub &rarr;</a></p>
+<p><a href="https://github.com/Tommaso-Vigano/simulated-annealing" style="display:inline-block;padding:0.7rem 1.1rem;border:1px solid #1f2937;border-radius:6px;background:#111827;color:#fff;font-weight:600;text-decoration:none;">View my implementation on GitHub &rarr;</a></p>
 
 Simulated annealing is a randomized algorithm that aims to find the global minimum of a function. It proposes neighbouring states and uses a temperature parameter to control whether it accepts a move to a worse state.
 
@@ -25,7 +25,7 @@ What role does temperature play?
 
 The algorithm starts from a random state $s$. At each step, we choose a neighbouring state $s_{\mathrm{next}}$. If $E(s_{\mathrm{next}})<E(s)$, we accept it and update $s=s_{\mathrm{next}}$.
 
-If you have studied calculus, you will know why accepting only improvements can be insufficient: we may get stuck at a local minimum. To help escape it, we sometimes accept a move even when $E(s_{\mathrm{next}})\geq E(s)$.
+If you have ever studied the foundamentals of calculus, you will know why accepting only improvements can be insufficient: we may get stuck at a local minimum. To help escape it, we sometimes accept a move even when $E(s_{\mathrm{next}})\geq E(s)$.
 
 Writing $E=E(s)$ and $E_{\mathrm{next}}=E(s_{\mathrm{next}})$, we use the acceptance rule:
 
@@ -60,7 +60,7 @@ As temperature increases, so does the probability of accepting a worse state. A 
 
 ## How does this connect to temperature in an LLM?
 
-Temperature plays a related role in an LLM: it controls how random the selection process is. Let’s look at the [official OpenAI documentation](https://developers.openai.com/api/reference/resources/completions/methods/create), which describes a sampling temperature between $0$ and $2$ for its Completions endpoint:
+Temperature plays a related role in an LLM: it controls how random the selection process is. Let’s look at the [official OpenAI documentation](https://developers.openai.com/api/reference/resources/completions/methods/create), which describes a sampling temperature between $0$ and $2$:
 
 > Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
 
@@ -97,7 +97,7 @@ When $T$ is small, dividing by it increases the differences between logits. Expo
 
 With a higher temperature, the differences between the scaled logits become smaller. The probabilities become more evenly distributed, giving less likely tokens a greater chance of being selected and increasing randomness.
 
-At $T=1$, we recover standard softmax. A temperature setting of $0$ is usually handled by selecting the highest-scoring token directly, rather than dividing by zero.
+At $T=1$, we recover standard softmax.
 
 This article began with a small curiosity while I was reading a paper and left me with many more questions about how LLMs work. The explanation I have given is deliberately simplified. I think I will study these models in more depth and share what I learn in future articles.
 
