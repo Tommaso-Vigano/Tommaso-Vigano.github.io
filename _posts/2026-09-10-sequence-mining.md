@@ -53,13 +53,9 @@ We can organize the search space as a **prefix tree**. At level $0$, the root re
 
 Here’s the example database from Chapter 10, with $\operatorname{minsup}=3$:
 
-| ID | Sequence |
-| --- | --- |
-| $s_1$ | `CAGAAGT` |
-| $s_2$ | `TGACAG` |
-| $s_3$ | `GAAGT` |
+![Example sequence database: s1 is CAGAAGT, s2 is TGACAG, and s3 is GAAGT](/assets/images/sequence-mining-example-database.png)
 
-![Prefix tree for the three example sequences, showing frequent, infrequent, and pruned candidates](/assets/images/sequence-mining-prefix-tree.png)
+![Original prefix search tree with support counts for a minimum support of three](/assets/images/sequence-mining-prefix-tree.png)
 
 The number beside each counted candidate is its support. For example, $\texttt{AA}$ appears as a subsequence in all three records, so it is frequent. $\texttt{C}$ appears in just two records, so we can stop exploring that branch. Extending a sequence cannot increase its support.
 
@@ -69,18 +65,15 @@ The number beside each counted candidate is its support. For example, $\texttt{A
 
 1. **Find frequent sequences of length 1.** Start with the individual symbols and count how many database records contain each one. In a separate example, suppose the minimum support is $2$ and we get these counts:
 
-   | Candidate | Support | Frequent? |
-   | --- | ---: | --- |
-   | `A` | 4 | Yes |
-   | `B` | 4 | Yes |
-   | `C` | 3 | Yes |
-   | `D` | 1 | No |
+   ![Support counts for A, B, C, and D: 4, 4, 3, and 1. Only D fails the minimum support of two.](/assets/images/sequence-mining-singleton-support.png)
 
    We discard $\texttt{D}$, leaving $F^{(1)}=\{A,B,C\}$.
 
 2. **Generate the next level of candidates.** At length $2$, combine the frequent symbols in every order, allowing repeats. At later levels, the prefix-tree version joins two frequent sequences of length $k$ that share their first $k-1$ symbols. Append the last symbol of the second sequence to the first. The two sequences can be the same.
 
 3. **Prune, count, and repeat.** Before counting a candidate of length $k+1$, delete each of its symbols in turn. If any resulting sequence of length $k$ is infrequent, discard the candidate: any record containing the candidate would also contain that shorter sequence. Count the support of the remaining candidates, keep those that meet $\operatorname{minsup}$, and move to the next level. Stop when there are no more candidates.
+
+![GSP pseudocode: count candidates, retain frequent sequences, and extend the prefix tree after pruning](/assets/images/sequence-mining-gsp-algorithm.png)
 
 Back in the prefix tree, $\texttt{GAA}$ and $\texttt{GAG}$ share the prefix $\texttt{GA}$, so they can generate $\texttt{GAAG}$. Its distinct length-three subsequences are $\texttt{AAG}$, $\texttt{GAG}$, and $\texttt{GAA}$. All three are frequent, so $\texttt{GAAG}$ survives pruning. We then count its support and find that it appears in all three database records.
 

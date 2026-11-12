@@ -4,7 +4,7 @@ title: "Pattern and Rule Assessment"
 date: 2026-09-14
 description: "How support, confidence, lift, and other measures help us assess and compare association rules and frequent patterns."
 categories: [data-mining, algorithms]
-image: /assets/images/pattern-and-rule-assessment.png
+image: /assets/images/pattern-and-rule-assessment-itemset-lift.png
 ---
 
 This is the third post in my series revisiting [*Data Mining and Machine Learning*](https://dataminingbook.info/) by Mohammed J. Zaki and Wagner Meira, Jr. In the previous posts, we looked at how to find frequent patterns and association rules. Now that we have those patterns and rules, how do we tell which ones are interesting?
@@ -14,8 +14,6 @@ This is the third post in my series revisiting [*Data Mining and Machine Learnin
 Remember that an **association rule** has the form $X\to Y$, where $X$ and $Y$ are disjoint, nonempty itemsets. We call $X$ the **antecedent** and $Y$ the **consequent**.
 
 I’ll write $XY$ as shorthand for $X\cup Y$, and $t(X)$ for the set of transactions containing $X$. When I write $P(X)$, I mean the probability that a transaction picked uniformly from the database contains $X$. So $P(XY)$ is the probability that it contains both $X$ and $Y$.
-
-![A transaction database split into four groups: containing X only, containing Y only, containing both, and containing neither](/assets/images/pattern-and-rule-assessment.png)
 
 ### Support
 
@@ -138,6 +136,8 @@ $$
 {\prod_{i=1}^{k}\operatorname{rsup}(\{x_i\})}.
 $$
 
+![Itemset lift is its relative support divided by the product of the relative supports of its individual items](/assets/images/pattern-and-rule-assessment-itemset-lift.png)
+
 This compares the probability of seeing all the items together with what we’d expect if the individual items were mutually independent.
 
 ### Rule-based measures
@@ -167,12 +167,9 @@ If we have a long list of frequent itemsets, we may choose to keep only the maxi
 
 An itemset $X$ with at least two items is **productive** if it occurs more often than expected under independence for every split into two nonempty parts:
 
-$$
-\operatorname{rsup}(X)>\operatorname{rsup}(X_1)\operatorname{rsup}(X_2)
-\quad\text{for every bipartition }\{X_1,X_2\}\text{ of }X.
-$$
+![An itemset is productive when its relative support exceeds the product of the supports of the two parts for every bipartition](/assets/images/pattern-and-rule-assessment-productive-itemsets.png)
 
-The key word is *every*: one split with lift greater than $1$ isn’t enough.
+The product $\operatorname{rsup}(X_1)\operatorname{rsup}(X_2)$ is the expected co-occurrence under independence. The key word is *every*: one split with lift greater than $1$ isn’t enough.
 
 ### Comparing rules
 
@@ -188,13 +185,9 @@ If $\operatorname{sup}(R)<\operatorname{sup}(R')$ for every more general rule $R
 
 Does adding conditions to the antecedent actually improve confidence? **Improvement** compares the confidence of $X\to Y$ with the highest confidence among its more general rules:
 
-$$
-\operatorname{imp}(X\to Y)
-=\operatorname{conf}(X\to Y)
--\max_{\varnothing\ne W\subsetneq X}\operatorname{conf}(W\to Y).
-$$
+![Improvement is the confidence of the rule minus the maximum confidence among its more general rules](/assets/images/pattern-and-rule-assessment-rule-improvement.png)
 
-We compare rules with nonempty antecedents, so this calculation applies when there’s at least one such generalization. A rule is **productive** when its improvement is positive: the more specific rule has higher confidence than every more general rule with the same consequent.
+In the formula, $W$ ranges over proper subsets of $X$. We compare rules with nonempty antecedents, so this calculation applies when there’s at least one such generalization. A rule is **productive** when its improvement is positive: the more specific rule has higher confidence than every more general rule with the same consequent.
 
 *Reference: [Chapter 12 — Pattern and Rule Assessment](https://dataminingbook.info/book_html/chap12/book.html).*
 
