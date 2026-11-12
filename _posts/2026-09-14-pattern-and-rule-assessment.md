@@ -136,7 +136,6 @@ $$
 {\prod_{i=1}^{k}\operatorname{rsup}(\{x_i\})}.
 $$
 
-![Itemset lift is its relative support divided by the product of the relative supports of its individual items](/assets/images/pattern-and-rule-assessment-itemset-lift.png)
 
 This compares the probability of seeing all the items together with what we’d expect if the individual items were mutually independent.
 
