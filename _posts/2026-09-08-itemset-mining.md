@@ -96,10 +96,10 @@ The subsets form a **lattice**: starting from the empty set, each edge down adds
 
 ![Subset lattice for five items, from the empty set to ABCDE](/assets/images/itemset-mining-lattice.png)
 
-There are $2^{|I|}$ subsets, including the empty set. With a binary representation, checking whether one transaction contains a candidate takes at most $O(|I|)$ time. For each candidate, we make that check across $|D|$ transactions, so the brute-force bound is:
+There are $2^{\lvert I\rvert}$ subsets, including the empty set. With a binary representation, checking whether a transaction contains a candidate takes at most $O(\lvert I\rvert)$ time. We repeat this check for all $\lvert D\rvert$ transactions for each candidate, so the brute-force time bound is:
 
 $$
-O\bigl(|I|\cdot |D|\cdot 2^{|I|}\bigr).
+O\bigl(\lvert I\rvert \cdot \lvert D\rvert \cdot 2^{\lvert I\rvert}\bigr).
 $$
 
 The three factors come from checking items, scanning transactions, and enumerating candidates, respectively.
@@ -170,7 +170,7 @@ We now combine the extensions within this class. For instance, intersecting the 
 
 ![Eclat pseudocode: intersect tidsets of extensions, keep frequent results, and recurse on each new prefix class](/assets/images/itemset-mining-eclat-algorithm.png)
 
-Is all this worth it? If tidsets are sorted lists, one intersection costs at most $O(|D|)$. There can still be exponentially many itemsets to explore, so the work of counting supports is bounded by $O(|D|\cdot 2^{|I|})$. The practical gain is that many intersections involve short lists, and Eclat reuses those lists as it goes deeper.
+Is all this worth it? If tidsets are sorted lists, one intersection costs at most $O(\lvert D \rvert)$. There can still be exponentially many itemsets to explore, so the work of counting supports is bounded by $O(\lvert D \rvert \cdot 2^{\lvert I \rvert})$. The practical gain is that many intersections involve short lists, and Eclat reuses those lists as it goes deeper.
 
 ### FP-growth algorithm
 
