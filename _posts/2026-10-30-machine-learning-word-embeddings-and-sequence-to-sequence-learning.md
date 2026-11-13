@@ -21,7 +21,12 @@ An **autoencoder** is a neural network trained to reconstruct its input: the tar
 
 Why would we use a neural network to learn the identity function? The key is what happens in the middle. If the hidden representation has fewer dimensions than the input, the encoder has to compress the input. The decoder then uses that compressed representation to reconstruct the input as closely as possible.
 
-![The encoder maps the input to a lower-dimensional space and the decoder maps it back](/assets/images/ml07-figure-02.png)
+$$
+\mathbf{x}\in\mathbb{R}^{I}
+\xrightarrow{\text{encoder}}\mathbf{h}\in\mathbb{R}^{J}
+\xrightarrow{\text{decoder}}\widehat{\mathbf{x}}\in\mathbb{R}^{I},
+\qquad J\ll I.
+$$
 
 Sometimes we also want the representation to be **sparse**: for a given input, only a few hidden units should be active.
 
@@ -29,9 +34,13 @@ If you've read about PCA, this might sound familiar. Both methods try to preserv
 
 We can express what we want the network to learn in its loss function:
 
-![The autoencoder loss combines reconstruction error with an optional sparsity penalty](/assets/images/ml07-figure-03.png)
+$$
+E(\mathbf{x})=
+\underbrace{\|\widehat{\mathbf{x}}-\mathbf{x}\|_2^2}_{\text{reconstruction error}}
++\lambda\underbrace{\sum_{j=1}^{J}\lvert h_j\rvert}_{\text{sparsity penalty}}.
+$$
 
-The first term measures how far the reconstruction is from the input. The second penalizes the magnitude of the hidden activations, and $\lambda$ controls how much that penalty matters. If different groups of inputs activate different units, the result can look a little like clustering. Sparsity alone doesn't guarantee a one-hot code, though. A penalty that's too strong can simply drive most activations toward zero and hurt reconstruction.
+Here, $h_j$ is the activation of hidden unit $j$. The first term measures how far the reconstruction is from the input. The second penalizes the magnitude of the hidden activations, and $\lambda$ controls how much that penalty matters. If different groups of inputs activate different units, the result can look a little like clustering. Sparsity alone doesn't guarantee a one-hot code, though. A penalty that's too strong can simply drive most activations toward zero and hurt reconstruction.
 
 What does this have to do with word embeddings? The connection is the idea of learning a useful representation in fewer dimensions.
 
@@ -55,9 +64,12 @@ How do we learn these vectors? Let's start with a **language model**: a model th
 
 The probability of a sentence is the probability of its first word, multiplied by the probability of the second word given the first, and so on. Each word is conditioned on all the words before it.
 
-![The probability of a sentence factors into successive conditional word probabilities](/assets/images/ml07-figure-06.png)
+$$
+P(s)=P(w_1,\ldots,w_k)
+=\prod_{i=1}^{k}P(w_i\mid w_1,\ldots,w_{i-1}).
+$$
 
-This factorization is exact. The difficulty is estimating all those probabilities: with a large vocabulary and long sentences, there are far too many possible histories to learn a separate estimate for each one.
+Here, $k$ is the number of words, and the first factor is simply $P(w_1)$. This factorization is exact. The difficulty is estimating all those probabilities: with a large vocabulary and long sentences, there are far too many possible histories to learn a separate estimate for each one.
 
 An **$n$-gram model** makes the problem smaller by looking back only at the previous $n-1$ words. A trigram model, for example, looks back at two. This makes estimation more manageable, but the model misses information that appears earlier in the sentence.
 
@@ -118,33 +130,45 @@ A **sequence-to-sequence** model takes one sequence and produces another. The tw
 
 Given an input sequence $x=(x_1,\ldots,x_m)$, we want to find the output sequence $y=(y_1,\ldots,y_n)$ that is most probable given $x$.
 
-![The ideal output sequence maximizes the conditional probability given the source](/assets/images/ml07-figure-13.png)
+$$
+y^*=\operatorname*{arg\,max}_{y}P(y\mid x).
+$$
 
 We don't know the true conditional distribution, so we learn a model $P(y\mid x,\theta)$ from pairs of input and output sequences. We then search for an output that maximizes the probability assigned by the model.
 
-![The predicted sequence maximizes the model’s conditional probability given the source and learned parameters](/assets/images/ml07-figure-14.png)
+$$
+\widehat{y}=\operatorname*{arg\,max}_{y}P_{\theta}(y\mid x).
+$$
 
 We can think of the model that assigns these probabilities as a **conditional language model**.
 
 ### Conditional Language Models
 
-A language model assigns a probability to a sequence. In the models we're looking at, each next token is predicted from the tokens that precede it.
+A language model assigns a probability to a sequence. In the models we're looking at, each next token is predicted from the tokens that precede it. We write $y_{<t}$ for the prefix $(y_1,\ldots,y_{t-1})$.
 
-![An autoregressive language model conditions each token on the earlier tokens](/assets/images/ml07-figure-15.png)
+$$
+P(y_1,\ldots,y_n)=\prod_{t=1}^{n}P(y_t\mid y_{<t}).
+$$
 
 A conditional language model also sees a source $x$. In translation, $x$ is the sentence we want to translate. At each step, the model predicts the next target token using both the source sentence and the target tokens already available.
 
-![A conditional language model also conditions each target token on the source sequence](/assets/images/ml07-figure-16.png)
+$$
+P(y_1,\ldots,y_n\mid x)=\prod_{t=1}^{n}P(y_t\mid y_{<t},x).
+$$
 
 What does *conditioned on the source* mean in practice? Imagine the English translation begins with “I saw a”. Without the source, both *cat* and *dog* might be plausible next words. If the Russian sentence mentions a cat, the source gives the model a reason to assign *cat* a higher probability. With a different source, the same English prefix could lead to a different next word. In other tasks, the context might be an image or a label.
 
-Think about what happens in human translation: a translator reads the source and uses their judgment to choose a translation. The figure uses probability as a way to express that intuition.
+Think about what happens in human translation: a translator reads the source and uses their judgment to choose a translation. The equation uses probability as a way to express that intuition: $P(y\mid x)$ stands for how plausible the translation seems to the translator.
 
-![Human translation illustrated as choosing an output based on the source and the translator’s judgment](/assets/images/ml07-figure-17.png)
+$$
+y^*=\operatorname*{arg\,max}_{y}P(y\mid x).
+$$
 
 In machine translation, the model uses its learned parameters $\theta$ to score possible outputs.
 
-![Machine translation uses a conditional model with learned parameters to score translations](/assets/images/ml07-figure-18.png)
+$$
+\widehat{y}=\operatorname*{arg\,max}_{y}P_{\theta}(y\mid x).
+$$
 
 That leaves three questions: What does the model look like? How do we learn $\theta$? And how do we find the best output sequence?
 
@@ -174,7 +198,9 @@ Suppose we have a training pair $(x,y)$. The source sequence $x=(x_1,\ldots,x_m)
 
 At step $t$, the model predicts a probability distribution over the target vocabulary. It uses the source $x$ and the earlier target tokens $y_1,\ldots,y_{t-1}$.
 
-![The next-token distribution is conditioned on the previous target tokens and the source sequence](/assets/images/ml07-figure-25.png)
+$$
+p_t(v)=P_{\theta}(y_t=v\mid y_{<t},x),\qquad v\in V.
+$$
 
 Suppose the decoder has received “I saw a”, and the next word in the training translation is *cat*. To keep the example small, imagine the vocabulary contains only these five words:
 
@@ -186,11 +212,14 @@ Suppose the decoder has received “I saw a”, and the next word in the trainin
 | car | 0.10 |
 | house | 0.05 |
 
-In this order, the predicted distribution is $[0.10,0.60,0.15,0.10,0.05]$, and the one-hot target is $[0,1,0,0,0]$.
+In this order, the predicted distribution is $[0.10,0.60,0.15,0.10,0.05]$, and the one-hot target $q_t$ is $[0,1,0,0,0]$.
 
 We use **cross-entropy** to compare them.
 
-![The cross-entropy formula multiplies each log probability by the corresponding one-hot target entry](/assets/images/ml07-figure-26.png)
+$$
+\operatorname{loss}_t
+=-\sum_{v\in V}q_t(v)\log p_t(v),
+$$
 
 The only nonzero entry in the target is the one for *cat*. That leaves:
 
@@ -200,7 +229,11 @@ $$
 
 So at each step, we take the negative logarithm of the probability assigned to the correct token. Over the entire sequence, we add the losses from all the prediction steps.
 
-![The sequence loss sums the cross-entropy losses across target steps](/assets/images/ml07-figure-27.png)
+$$
+\operatorname{loss}(x,y)
+=\sum_{t=1}^{n}\operatorname{loss}_t
+=-\sum_{t=1}^{n}\log P_{\theta}(y_t\mid y_{<t},x).
+$$
 
 Where do the previous target tokens come from during training? In this setup, we use **teacher forcing**: at each step, the decoder receives the previous token from the training translation. It starts with a beginning-of-sequence token.
 
@@ -218,13 +251,21 @@ At inference time, we don't have a reference translation. The decoder starts wit
 
 Once we've learned $\theta$, our goal is to find the output sequence with the highest probability under the model. Its score comes from multiplying the probabilities of its tokens, each conditioned on the source and on the prefix of that particular sequence.
 
-![Sequence decoding seeks the output that maximizes the product of its conditional token probabilities](/assets/images/ml07-figure-30.png)
+$$
+\widehat{y}
+=\operatorname*{arg\,max}_{y}
+\prod_{t=1}^{n(y)}P_{\theta}(y_t\mid y_{<t},x),
+$$
 
-Searching every possible sequence gets expensive quickly. We can use two simpler approaches:
+where $n(y)$ is the number of tokens in candidate sequence $y$, including its end token. Searching every possible sequence gets expensive quickly. We can use two simpler approaches:
 
 1. **Greedy decoding:** pick the most probable token at each step and keep going.
 
-   ![Greedy decoding chooses a local maximum at each step to approximate the sequence-level search](/assets/images/ml07-figure-31.png)
+   $$
+   \widehat{y}_t
+   =\operatorname*{arg\,max}_{v\in V}
+   P_{\theta}(y_t=v\mid \widehat{y}_{<t},x).
+   $$
 
    This doesn't guarantee the most probable sequence overall. A token can look best now and lead to less probable continuations later. Greedy decoding never goes back to reconsider an earlier choice.
 
