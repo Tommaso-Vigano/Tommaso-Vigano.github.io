@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Machine Learning from Scratch 07: Word Embeddings and Sequence-to-Sequence Learning"
-date: 2026-11-13
+date: 2026-10-30
 description: "How neural networks learn word embeddings, and how encoder–decoder models turn one sequence into another."
 categories: [machine-learning, neural-networks, natural-language-processing]
 image: /assets/images/ml07-figure-19.png
